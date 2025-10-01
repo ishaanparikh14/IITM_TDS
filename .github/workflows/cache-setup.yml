@@ -1,0 +1,37 @@
+name: Cache Setup
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  cache-setup:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Cache dependencies
+      uses: actions/cache@v4
+      id: cache-dependencies
+      with:
+        path: |
+          ~/.cache
+          node_modules
+          vendor
+          target
+          .venv
+          __pycache__
+        key: cache-4b02f81
+        
+    - name: prime-cache-4b02f81
+      run: |
+        if [ "${{ steps.cache-dependencies.outputs.cache-hit }}" == "true" ]; then
+          echo "Cache hit"
+        else
+          echo "Cache miss"
+        fi
